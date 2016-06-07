@@ -1,0 +1,148 @@
+{% extends '__base__.html' %}
+
+{% block title %} Blog Edit {% endblock %}
+
+{% block beforehead %}
+
+
+
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<link href="/static/summernote-0.8.1-dist/summernote.css" rel="stylesheet">
+<script src="/static/summernote-0.8.1-dist/summernote.js"></script>
+
+{% endblock %}
+
+{% block content %}
+    
+    
+    <div id="error" class="uk-width-1-1">
+    
+    </div>
+    
+    <div id="loading" class="uk-width-1-1">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>Loading...</span>
+    </div>
+    
+    <div class="uk-width-1-5 uk-margin-bottom">
+        <div class="uk-panel uk-panel-box">
+            <ul class="breadcrumb">
+                <li><a href="manage/conments">Manage Conments</a></li>
+                <li><a href="/manage/blogs">Manage Blogs</a></li>
+                <li><a href="/manage/users">Manage Users</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="vm" class="uk-width-2-3">
+        <form v-on:submit.prevent="submit" class="uk-form uk-form-stacked">
+            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+            
+            <div class="uk-form-row">
+                <label class="uk-form-label">Article Name</label>
+                <div class="uk-form-controls">
+                    <input v-model="name" name="name" type="text" placeholder="write article name here" class="uk-1-1">                    
+                </div>
+            </div>
+            
+            <div class="uk-form-row">
+                <label class="uk-form-label">Summary</label>
+                <div class="uk-form-controls">
+                    <textarea v-model="summary" name="summary" rows="4" placeholder="write summary here" class="uk-width-1-1" style="resize:none"></textarea>
+                </div>
+            </div>
+            
+            <div class="uk-form-row">
+                <label class="uk-form-label">Content</label>
+                <div class="uk-form-controls">
+                    <div id="summernote">Hello SummerNote</div>
+                    <!--<textarea v-model="content" name="content" row="16" placeholder="write content here" class="uk-width-1-1" style="resize:none"></textarea>-->
+                </div>
+            </div>
+            
+            <div class="uk-form-row">
+                <button class="uk-button uk-button-primary" type="submit"><i class="uk-icon-save"></i> Save </button>
+                <a href="/manage/blogs" class="uk-button"><i class="uk-icon-items"></i> Cancel </a>
+            </div>
+            
+        </form>
+    
+    </div>
+    
+    
+ 
+ 
+
+<script>
+    var 
+    ID='{{id}}',
+    action='{{action}}';    //where these 2 come from?
+
+    var vm_data={
+            name: '',
+            summary: '',
+            content: '',
+            bid: ID,
+            created_at: ''
+        }
+    
+    var vm=new Vue({
+        el: '#vm',
+        data: vm_data,
+        methods: {            
+            submit: function(event){
+                
+                event.preventDefault();
+                vm_data['content']=$('#summernote').summernote('code')
+                alert('submit');
+                var $form=$('#vm').find('form');
+                $form.postJSON(action,this.$data,function(err,r){
+                    if(err){
+                        $form.showFormError(err);
+                    }
+                    else{
+                        return location.assign('/manage/blogs_test');
+                    }
+                });
+               
+            }        
+        }            
+    });
+ 
+
+    if(ID){
+        getJSON('/api/blog/'+ID,function(err,blog){
+            if(err){
+                return fatal(err);
+            }
+            else{
+                $('#loading').hide();
+                //alert(JSON.stringify(blog) )
+                vm_data['name']=blog['name'] ;
+                vm_data['summary']=blog['summary'];
+                //vm_data['content']=blog['content'];
+                $("#summernote").summernote('code', blog['content']);
+                vm_data['created_at']=blog['created_at'];                
+            }
+        });
+    }
+    else{
+        $('#loading').hide();
+        
+        $('#vm').show();
+        alert($('#vm').attr('class') );
+    }
+    
+
+</script>
+
+<script>
+    $('#summernote').summernote({
+    height: 300,
+    focus: true,
+    });
+</script>    
+
+
+{% endblock %}
+

@@ -1,0 +1,32 @@
+{% extends '__base__.html' %}
+
+{% block title%}Blogs{% endblock %}
+
+{% block content%}
+  
+  <div class="uk-width-medium-3-4">
+    {% for blog in blogs %}
+      <article class="uk-article">
+        <h2><a href="/blog/{{blog.id}}">{{blog.name}}</a></h2>
+        <p class="uk-article-meta">发表于{{blog.created_at | datetime}}</p>
+        <p>{{blog.summary}}</p>
+        <p><a href="/blog/{{blog.id}}">continue <i class="uk-icon-angle-double-right"></i></a></p>
+      </article>
+      <hr class="uk-article-divider">
+    {% endfor %}
+  </div>
+  
+  <div class="uk-width-medium-1-4">
+    <div class="uk-panel uk-panel-header">
+      <h3 class="uk-panel-title">Some Link</h3>
+      <ul class="uk-list uk-list-line">
+        <li><a href="#" target="_blank"><i class="uk-icon-thumbs-o-up"></i>Program</a></li>
+        <li><a href="#" target="_blank"><i class="uk-icon-thumbs-o-up"></i>Reading</a></li>
+        <li><a href="#" target="_blank"><i class="uk-icon-thumbs-o-up"></i>Git Guide</a></li>
+        <li><a href="#" target="_blank"><i class="uk-icon-thumbs-o-up"></i>Pyhon Guide</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  
+{%endblock%}

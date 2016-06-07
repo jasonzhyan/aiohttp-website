@@ -1,0 +1,49 @@
+{% extends '__base__.html' %}
+
+{% block content %}
+<script>
+var about_blogs=$.getJSON('/api/blogs',{ page:'1' })
+</script>
+
+    <div id="vm" class="uk-width-1-1">
+        <a href="/manage/blog/create" class="uk-button uk-button-primary" ><i class="uk-icon-plus"></i></a>
+        
+        <table class="uk-table uk-table-hover">
+            <thead>
+                <tr>
+                    <th class="uk-width-5-10" >title/sumary </th>
+                    <th class="uk-width-2-10"> author</th>
+                    <th class="uk-width-2-10"> created time</th>
+                    <th class="uk-width-1-10"> operation</th> 
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="blog in blogs" ><!-- here changed-->
+                    <td>
+                        <a target="_blank" v-bind:href="'/blog/'+blog.id">{{blog.name}}</a><!-- here changed-->
+                    </td>
+                    <td>
+                        <a target="_blank" v-bind:href="'/user/'+blog.user_id">{{blog.user_name}}</a>
+                    </td>
+                    <td>
+                        <span>{{blog.created_at.toDateTime()}}</span>
+                    </td>
+                    <td>
+                        <a href="#0" v-on:click="edit_blog(blog)"><i class="uk-icon-edit"></i></a>
+                        <a href="#0" v-on:click="delet_blog(blog)"><i class="uk-icon-delet"></i></a>
+                        
+                    </td>
+                
+                </tr>
+            </tbody>
+            
+            <div v-component="pagination" v-with="page"></div>
+        </table>
+        
+    </div>
+
+<script>
+
+</script>
+
+{%endblock%}

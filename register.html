@@ -1,0 +1,109 @@
+
+
+{% extends '__base__.html' %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block beforehead %}
+  <script>
+    alert('0');
+    function validateEmail(email){
+    
+      var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+      return re.test(email.toLowerCase());
+    }
+    $(function(){  //相当于$(document).ready(function(){})
+      var vm=new Vue({
+        el:'#vm',
+        data:{
+            name:'',
+            email:'',
+            password1:'',
+            password2:'',
+            vdata:''
+        },
+        methods:{
+            submit: function(event){
+                alert('1');
+                event.preventDefault();
+                var $form=$('#vm');
+                if(!this.name.trim()){
+                    return $form.showFormError('input your name please');
+                }
+                if(!validateEmail(this.email.trim())){
+                    return $form.showFormError('input corect email please');
+                }
+                if(this.password1.length<6){
+                    return $form.showFormError('password should be at least 6 charactors');
+                }
+                if(this.password1!==this.password2){
+                    return $form.showFormError('passwords not the same');
+                }
+                var email=this.email.trim().toLowerCase();
+                this.vdata=JSON.stringify({   
+                        name:this.name.trim(),
+                        email:email,
+                        passwd:CryptoJS.SHA1(email+':'+this.password1).toString()
+                    });
+                $form.postJSON(
+                    '/api/users',
+                    {    //postJSON: 通过post方法来快速获得一个json对象，路径，参数，回调函数
+                        name:this.name.trim(),
+                        email:email,
+                        passwd:CryptoJS.SHA1(email+':'+this.password1).toString()
+                    },
+                    function(err,r){
+                        if(err){
+                            return $form.showFormError(err);
+                        }
+                        return location.assign('/login');
+                    }
+                );
+            }
+            
+        }
+      });
+      $('#vm').show();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  <div class="uk-width-2-3">
+    <h1>welcome to sign up</h1>
+    <form id="vm" v-on:submit.prevent="submit" class="uk-form uk-form-stacked">
+      <div class="uk-alert uk-alert-danger uk-hidden"></div>
+      <div class="uk-form-row">
+        <label class="uk-form-label">name: </label>
+        <div class="uk-form-controls">
+          <input v-model="name" type="text" max-length="50" placeholder="input name" class="uk-width-1-1">
+        </div>
+      </div>
+      <div class="uk-form-row">
+        <label class="uk-form-label">email: </label>
+        <div class="uk-form-controls">
+          <input v-model="email" type="text" max-length="50" placeholder="your email@example.com" class="uk-width-1-1">
+        </div>
+      </div>
+      <div class="uk--form-row">
+        <label class="uk-form-label">password: </label>
+        <div class=uk-form-controls">
+          <input v-model="password1" type="password" max-length="50" placeholder="enter your password" class="uk-width-1-1">
+        </div>
+      </div>
+      <div class="uk-form-row">
+        <label class="uk-form-label">password again: </label>
+        <div class="uk-form-controls">
+          <input v-model="password2" type="password" max-length="50" placeholder="enter password again" class="uk-width-1-1">
+        </div>
+      </div>
+      <div class="uk-form-row">
+        <button type="submit" class="uk-button uk-button-primary" ><i class="uk-icon-user"></i> Sign up</button>
+      </div>
+      <div class="uk-from-row">
+        <input v-model="vdata" max-length="100" type="text" class="uk-width-1-1">
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

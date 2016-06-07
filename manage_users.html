@@ -1,0 +1,100 @@
+{% extends '__base__.html' %}
+
+{% block title %}manage users{% endblock %}
+
+{% block content %}
+    <div id="loading" class="uk-width-1-1">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>Loading...</span>
+    </div>
+    
+    <div id="vm" class="uk-width-1-1">
+        <div >
+            <form v-on:submit.prevent="submit">
+                <table class="uk-table">
+                    <h3 class="uk-table-header"> Manage the Users:</h3>
+                    <thead>
+                        <th class="uk-width-5-10">User ID</th>
+                        <th class="uk-width-2-10">User Name</th>
+                        <th class="uk-width-1-10">Admin</th>
+                        <th class="uk-width-2-10">Operation</th>
+                    </thead>
+                    <tbody>
+                        
+                            <tr v-for="user in users">
+                                <td><span v-html="user.id"></span</td>
+                                <td><span v-html="user.name"></span</td>
+                                <td>
+                                    <span v-if="user.admin">Yes</span>
+                                    <span v-else>No</span>                                
+                                </td>
+                                <td>
+                                    <span ><a href="#" v-on:click.prevent="del(user)"><i class="uk-icon-minus-square"></i> delete</a>&nbsp;&nbsp;&nbsp;</span>
+                                    <span v-if="user.admin"><a href="#" v-on:click.prevent="turn_off(user)"><i class="uk-icon-user-times"></i> Turn to common </a></span>
+                                    <span v-else><a href="#" v-on:click.prevent="turn_on(user)"><i class="uk-icon-user"></i> Turn to admin</a></span>   
+                                        
+                                </td>
+                                
+                            </tr>
+                           
+                    </tbody>            
+                   
+                </table>
+                <div class="uk-row">
+                        <input v-model="users" type="text">
+                    </div>
+                    
+                <div class="uk-row">
+                        <input v-model="user1" type="text">
+                    </div>    
+            </form> 
+        </div>
+    </div>
+    
+    <div id="forjinja2">
+        <p>{{users[0].id}}</p>
+    </div>
+    
+    <div id="json_users">
+        <p>{{json_users}}</p>
+        <p>&#34;</p>
+    </div>
+{% endblock %}
+
+{% block endforjs %}
+<script>
+var users= '';
+var data={
+        users:'',
+        user1:''
+        
+    };
+var vm = new Vue({
+    el: '#vm',
+    data: data,
+    methods:{
+        turn_on: function(user){
+            
+                alert('turn on '+user.id);
+            
+        },
+        turn_off: function(user){alert('turn off '+user.id);},
+        del: function(user){
+            if (confirm('确认要删除“' + user.name + '”？删除后不可恢复！')){
+                alert(user.name+' deleted');
+            }else{
+                alert(user.name+" not deleted ");
+            }
+        }
+    }
+});    
+
+var json_users='{{json_users}}';
+json_users=json_users.replace(/&#34;/g, '"');
+alert(json_users);
+if(json_users){
+    $('#loading').hide();
+}
+data['users']=JSON.parse(json_users);//.//unstringify from json object
+data['user1']=data['users'][0].name
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends '__base__.html' %}
+
+{% block title %}blog{% endblock %}
+
+{% block content %}
+    <div class="uk-width-3-4">
+        <div class="uk-container">
+          <article class="uk-article">
+            <h2 class="uk-article-title">{{blog.name}}</h2>
+            <p class="uk-article-meta">Author: <a>{{blog.user_name}}</a> created at: {{blog.created_at | datetime}}</p>
+            <p class="uk-article-content">{{blog.content |safe}}</p>            
+          </article>
+          <hr class="uk-article-divider">
+        </div>
+        
+        <div class="uk-container">
+          <h2>Comments:</h2>
+          {% for comment in comments %}
+          <article class="uk-article">
+            <p class="uk-article-content">{{comment.content}}</p>    
+            <p class="uk-article-meta">Author: <a>{{comment.user_name}}</a> created at: {{comment.created_at | datetime}}</p>
+                    
+          </article>
+          <hr class="uk-article-divider">
+          {% endfor %}
+          
+        </div>
+        
+        <div id="vm">
+            <div class="uk-container">
+                <form class="uk-form" v-on:submit.prevent="submit">
+                    <div class="uk-alert uk-alert-danger uk-hidden"><p></p></div>
+                    <h3 class="uk-form-header">Write a comment : </h3>
+                    <textarea v-model="new_comment" class="uk-textarea"></textarea><br>
+                    <button type="submit"><i class="uk-icon-submit"></i> submit</button>
+                    
+                </form>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="uk-width-1-4">
+        <div class="uk-panel uk-panel-header">
+            <h3 class="uk-panel-title">Links</h3>
+            <ul class="uk-panel-list uk-list uk-list-line">            
+                <li><a>Art</a></li>
+                <li><a>PE</a></li>
+                <li><a>Read</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block endforjs %}
+<script>
+'use strict';
+//alert(0);
+var data={
+    new_comment:'',
+    blog_id:'{{blog.id}}',
+    user_id:'{{__user__.id}}',
+    user_name:'{{__user__.name}}',
+    user_image:'{{__user__.image}}'
+};
+var vm= new Vue({
+    el: '#vm',
+    data:data,
+    methods: {
+        submit: function(){
+            //alert(this.new_comment);
+            var $form=$('#vm form');
+            $form.postJSON('/api/comment',this.$data,function(err,r){
+                if(err){
+                    $form.showFormError(err);
+                }
+                else{
+                    $form.show();
+                    return;
+                }
+            });
+        },
+    }
+});
+
+</script>
+{% endblock %}

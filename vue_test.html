@@ -1,0 +1,51 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/uikit-2.22.0/css/uikit.min.css">
+            
+    <script src="../static/js/jquery-2.2.0.js"></script>
+    <script src="../static/js/vue.js"></script>
+               
+   
+  </head>
+  <body>
+    <div id="demo" >
+      <h3>hi</h3>
+      <h3>{{message}}</h3>     
+      <input  v-model="message">
+    </div>
+    
+    <div>
+      <form id="form01">
+        <p>input1: {{in1}}, input2: {{in2}}</p>
+        <input v-model="in1" type="text">
+        <input type="checkbox" v-model="in2" lazy>
+      </form>
+    </div>  
+    
+    <div id="together">
+      <p>message is: {{message}}</p>  
+    </div>
+     <script>
+     'use strict';
+      var data={
+        message:'Hello there'
+      };
+      
+      var demo=new Vue({
+        el:'#demo',
+        data:data
+      });
+      
+      var data2={
+        in1:'1',
+        
+      };
+      
+      var form1=new Vue({el:'#form01',data: data2});
+      
+      new Vue({el:'#together',data: data});
+    </script>
+  </body>
+</html>
